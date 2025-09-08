@@ -1,41 +1,22 @@
 import { createClient } from '@supabase/supabase-js'
-import type { User, SupabaseClient } from '@supabase/supabase-js'
+import type { User } from '@supabase/supabase-js'
 
 export const useAuth = () => {
   // Estados reativos para autenticação
   const user = useState<User | null>('auth.user', () => null)
   const isAuthenticated = computed(() => !!user.value)
 
-  // Inicializar cliente Supabase apenas no lado do cliente
-  const supabase = ref<SupabaseClient | null>(null)
-
-  // Função para inicializar o cliente Supabase
-  const initSupabase = () => {
-    if (process.client && !supabase.value) {
-      const config = useRuntimeConfig()
-      
-      if (!config.public.supabaseUrl || !config.public.supabaseAnonKey) {
-        console.error('Configurações do Supabase não encontradas')
-        return null
-      }
-
-      supabase.value = createClient(
-        config.public.supabaseUrl as string,
-        config.public.supabaseAnonKey as string
-      )
-    }
-    return supabase.value
-  }
+  // Configurar cliente Supabase
+  const config = useRuntimeConfig()
+  const supabase = createClient(
+    config.public.supabaseUrl as string,
+    config.public.supabaseAnonKey as string
+  )
 
   // Função para fazer login
   const login = async (email: string, password: string) => {
-    const client = initSupabase()
-    if (!client) {
-      return { error: new Error('Cliente Supabase não inicializado') }
-    }
-
     try {
-      const { data, error } = await client.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
       })
@@ -58,13 +39,8 @@ export const useAuth = () => {
 
   // Função para fazer logout
   const logout = async () => {
-    const client = initSupabase()
-    if (!client) {
-      return { error: new Error('Cliente Supabase não inicializado') }
-    }
-
     try {
-      const { error } = await client.auth.signOut()
+      const { error } = await supabase.auth.signOut()
       user.value = null
       return { error }
     } catch (error: any) {
@@ -73,15 +49,10 @@ export const useAuth = () => {
     }
   }
 
-  // Função para verificar sessão ativa (apenas no cliente)
+  // Função para verificar sessão ativa
   const checkSession = async () => {
-    if (!process.client) return
-
-    const client = initSupabase()
-    if (!client) return
-
     try {
-      const { data: { session } } = await client.auth.getSession()
+      const { data: { session } } = await supabase.auth.getSession()
       if (session?.user) {
         user.value = session.user
       }
@@ -90,12 +61,10 @@ export const useAuth = () => {
     }
   }
 
-  // Verificar sessão ao inicializar (apenas no cliente)
-  if (process.client) {
-    onMounted(() => {
-      checkSession()
-    })
-  }
+  // Verificar sessão ao inicializar
+  onMounted(() => {
+    checkSession()
+  })
 
   return {
     user: readonly(user),
