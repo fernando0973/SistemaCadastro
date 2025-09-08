@@ -1,6 +1,24 @@
-# Nuxt Minimal Starter
+# Sistema de Cadastro
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Sistema de login com NuxtJS 4. TailwindCSS, HeadlessUI, HeroIcons e Supabase.
+
+## Tecnologias
+
+- **Nuxt 4** - Framework Vue.js com SSR
+- **TailwindCSS** - Framework CSS utilitário
+- **TypeScript** - Tipagem estática
+- **HeadlessUI** - Componentes acessíveis
+- **HeroIcons** - Biblioteca de ícones
+- **Supabase** - Backend-as-a-Service
+
+## Funcionalidades
+
+- ✅ Sistema de login/cadastro com abas
+- ✅ Componentes reutilizáveis (BaseButton, BaseInput, BasePasswordInput)
+- ✅ Toggle de visualização de senha
+- ✅ Design system com cores semânticas (laranja/preto)
+- ✅ Layout responsivo
+- ✅ TypeScript em todos os componentes
 
 ## Setup
 
