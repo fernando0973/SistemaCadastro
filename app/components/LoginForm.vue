@@ -36,6 +36,11 @@
       </button>
     </div>
 
+    <!-- Mensagem de erro -->
+    <div v-if="errorMessage" class="mb-4 p-3 bg-danger-50 border border-danger-200 rounded-lg">
+      <p class="text-sm text-danger-600">{{ errorMessage }}</p>
+    </div>
+
     <!-- Formulário de Login -->
     <form v-if="activeTab === 'login'" @submit.prevent="handleLogin" class="space-y-4">
       <BaseInput
@@ -44,6 +49,7 @@
         label="E-mail"
         placeholder="seu@email.com"
         required
+        :disabled="isLoading"
       />
 
       <BasePasswordInput
@@ -51,6 +57,7 @@
         label="Senha"
         placeholder="Digite sua senha"
         required
+        :disabled="isLoading"
       />
 
       <div class="flex items-center justify-between">
@@ -59,6 +66,7 @@
             v-model="loginForm.rememberMe"
             type="checkbox"
             class="w-4 h-4 text-primary-500 bg-background-primary border-border-primary rounded focus:ring-primary-500 focus:ring-2"
+            :disabled="isLoading"
           />
           <span class="ml-2 text-sm text-text-secondary">Lembrar de mim</span>
         </label>
@@ -73,8 +81,9 @@
         variant="primary"
         size="md"
         class="w-full"
+        :disabled="isLoading"
       >
-        Entrar
+        {{ isLoading ? 'Entrando...' : 'Entrar' }}
       </BaseButton>
     </form>
 
@@ -86,6 +95,7 @@
         label="E-mail"
         placeholder="seu@email.com"
         required
+        :disabled="isLoading"
       />
 
       <BasePasswordInput
@@ -93,6 +103,7 @@
         label="Senha"
         placeholder="Digite sua senha"
         required
+        :disabled="isLoading"
       />
 
       <BasePasswordInput
@@ -100,6 +111,7 @@
         label="Confirmar Senha"
         placeholder="Confirme sua senha"
         required
+        :disabled="isLoading"
       />
 
       <div class="flex items-start">
@@ -108,6 +120,7 @@
           type="checkbox"
           class="w-4 h-4 text-primary-500 bg-background-primary border-border-primary rounded focus:ring-primary-500 focus:ring-2 mt-0.5"
           required
+          :disabled="isLoading"
         />
         <label class="ml-3 text-sm text-text-secondary">
           Concordo com os 
@@ -122,8 +135,9 @@
         variant="primary"
         size="md"
         class="w-full"
+        :disabled="isLoading"
       >
-        Criar Conta
+        {{ isLoading ? 'Criando...' : 'Criar Conta' }}
       </BaseButton>
     </form>
   </div>
@@ -165,18 +179,61 @@ const registerForm = reactive<RegisterForm>({
   acceptTerms: false
 })
 
+// Estado de loading e erro
+const isLoading = ref(false)
+const errorMessage = ref('')
+
+// Usar o composable de autenticação
+const { login, isAuthenticated } = useAuth()
+
 // Métodos
 const setActiveTab = (tab: TabType) => {
   activeTab.value = tab
+  errorMessage.value = ''
 }
 
-const handleLogin = () => {
-  console.log('Login form submitted:', loginForm)
-  // Aqui será implementada a lógica de login
+const handleLogin = async () => {
+  if (!loginForm.email || !loginForm.password) {
+    errorMessage.value = 'Email e senha são obrigatórios'
+    return
+  }
+
+  isLoading.value = true
+  errorMessage.value = ''
+
+  try {
+    const { error } = await login(loginForm.email, loginForm.password)
+    if (error) {
+      errorMessage.value = error.message
+    } else {
+      // Redirecionar para a página principal após login bem-sucedido
+      await navigateTo('/')
+    }
+  } catch (error: any) {
+    errorMessage.value = error.message || 'Ocorreu um erro inesperado'
+  } finally {
+    isLoading.value = false
+  }
 }
 
 const handleRegister = () => {
+  if (!registerForm.email || !registerForm.password) {
+    errorMessage.value = 'Email e senha são obrigatórios'
+    return
+  }
+  
+  if (registerForm.password !== registerForm.confirmPassword) {
+    errorMessage.value = 'As senhas não coincidem'
+    return
+  }
+  
+  if (!registerForm.acceptTerms) {
+    errorMessage.value = 'Você deve aceitar os termos de uso'
+    return
+  }
+
   console.log('Register form submitted:', registerForm)
+  errorMessage.value = 'Funcionalidade de registro ainda não implementada'
   // Aqui será implementada a lógica de cadastro
 }
 </script>
