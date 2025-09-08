@@ -1,151 +1,107 @@
 import { createClient } from '@supabase/supabase-js'
-import type { User, Session } from '@supabase/supabase-js'
+import type { User, SupabaseClient } from '@supabase/supabase-js'
 
 export const useAuth = () => {
-  // Estados globais para o usuário e sessão
+  // Estados reativos para autenticação
   const user = useState<User | null>('auth.user', () => null)
-  const session = useState<Session | null>('auth.session', () => null)
-  const loading = useState<boolean>('auth.loading', () => false)
+  const isAuthenticated = computed(() => !!user.value)
 
-  // Configuração do cliente Supabase
-  const config = useRuntimeConfig()
-  const supabase = createClient(
-    config.public.supabaseUrl as string,
-    config.public.supabaseKey as string
-  )
+  // Inicializar cliente Supabase apenas no lado do cliente
+  const supabase = ref<SupabaseClient | null>(null)
 
-  /**
-   * Função para fazer login com email e senha
-   */
-  const login = async (email: string, password: string) => {
-    try {
-      loading.value = true
+  // Função para inicializar o cliente Supabase
+  const initSupabase = () => {
+    if (process.client && !supabase.value) {
+      const config = useRuntimeConfig()
       
-      const { data, error } = await supabase.auth.signInWithPassword({
+      if (!config.public.supabaseUrl || !config.public.supabaseAnonKey) {
+        console.error('Configurações do Supabase não encontradas')
+        return null
+      }
+
+      supabase.value = createClient(
+        config.public.supabaseUrl as string,
+        config.public.supabaseAnonKey as string
+      )
+    }
+    return supabase.value
+  }
+
+  // Função para fazer login
+  const login = async (email: string, password: string) => {
+    const client = initSupabase()
+    if (!client) {
+      return { error: new Error('Cliente Supabase não inicializado') }
+    }
+
+    try {
+      const { data, error } = await client.auth.signInWithPassword({
         email,
         password
       })
 
       if (error) {
-        throw error
+        console.error('Erro no login:', error.message)
+        return { error }
       }
 
-      // Atualiza os estados globais
-      user.value = data.user
-      session.value = data.session
+      if (data.user) {
+        user.value = data.user
+      }
 
-      return { success: true, data }
+      return { data, error: null }
     } catch (error: any) {
-      console.error('Erro no login:', error)
-      return { 
-        success: false, 
-        error: error.message || 'Erro ao fazer login' 
-      }
-    } finally {
-      loading.value = false
+      console.error('Erro inesperado no login:', error)
+      return { error }
     }
   }
 
-  /**
-   * Função para fazer logout
-   */
+  // Função para fazer logout
   const logout = async () => {
+    const client = initSupabase()
+    if (!client) {
+      return { error: new Error('Cliente Supabase não inicializado') }
+    }
+
     try {
-      loading.value = true
-      
-      const { error } = await supabase.auth.signOut()
-      
-      if (error) {
-        throw error
-      }
-
-      // Limpa os estados globais
+      const { error } = await client.auth.signOut()
       user.value = null
-      session.value = null
-
-      // Redireciona para a página de login
-      await navigateTo('/login')
-
-      return { success: true }
+      return { error }
     } catch (error: any) {
       console.error('Erro no logout:', error)
-      return { 
-        success: false, 
-        error: error.message || 'Erro ao fazer logout' 
-      }
-    } finally {
-      loading.value = false
+      return { error }
     }
   }
 
-  /**
-   * Função para verificar se o usuário está logado
-   */
-  const isAuthenticated = computed(() => !!user.value && !!session.value)
+  // Função para verificar sessão ativa (apenas no cliente)
+  const checkSession = async () => {
+    if (!process.client) return
 
-  /**
-   * Função para obter o usuário atual
-   */
-  const getCurrentUser = async () => {
+    const client = initSupabase()
+    if (!client) return
+
     try {
-      const { data: { user }, error } = await supabase.auth.getUser()
-      
-      if (error) {
-        throw error
-      }
-
-      return user
-    } catch (error) {
-      console.error('Erro ao obter usuário:', error)
-      return null
-    }
-  }
-
-  /**
-   * Função para inicializar a autenticação (verificar sessão existente)
-   */
-  const initialize = async () => {
-    try {
-      const { data: { session: currentSession }, error } = await supabase.auth.getSession()
-      
-      if (error) {
-        throw error
-      }
-
-      if (currentSession) {
-        user.value = currentSession.user
-        session.value = currentSession
+      const { data: { session } } = await client.auth.getSession()
+      if (session?.user) {
+        user.value = session.user
       }
     } catch (error) {
-      console.error('Erro ao inicializar auth:', error)
+      console.error('Erro ao verificar sessão:', error)
     }
   }
 
-  // Listener para mudanças de estado de autenticação
-  supabase.auth.onAuthStateChange((event, newSession) => {
-    if (event === 'SIGNED_IN' && newSession) {
-      user.value = newSession.user
-      session.value = newSession
-    } else if (event === 'SIGNED_OUT') {
-      user.value = null
-      session.value = null
-    }
-  })
+  // Verificar sessão ao inicializar (apenas no cliente)
+  if (process.client) {
+    onMounted(() => {
+      checkSession()
+    })
+  }
 
   return {
-    // Estados
     user: readonly(user),
-    session: readonly(session),
-    loading: readonly(loading),
     isAuthenticated,
-    
-    // Métodos
     login,
     logout,
-    getCurrentUser,
-    initialize,
-    
-    // Cliente Supabase (caso precise de acesso direto)
-    supabase
+    checkSession
   }
 }
