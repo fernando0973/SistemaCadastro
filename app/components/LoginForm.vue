@@ -1,24 +1,24 @@
 <template>
-  <div class="bg-background-elevated rounded-xl shadow-elevated border border-border-primary p-6 w-96">
+  <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 w-96">
     <!-- Cabeçalho -->
     <div class="text-center mb-6">
-      <h2 class="text-lg font-semibold text-text-primary mb-1">
+      <h2 class="text-lg font-semibold text-gray-900 mb-1">
         {{ activeTab === 'login' ? 'Bem-vindo de volta' : 'Criar sua conta' }}
       </h2>
-      <p class="text-sm text-text-secondary">
+      <p class="text-sm text-gray-600">
         {{ activeTab === 'login' ? 'Entre com suas credenciais' : 'Preencha os dados para começar' }}
       </p>
     </div>
 
     <!-- Tabs -->
-    <div class="flex bg-background-secondary rounded-lg p-1 mb-5">
+    <div class="flex bg-gray-100 rounded-lg p-1 mb-5">
       <button
         @click="setActiveTab('login')"
         :class="[
           'flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all',
           activeTab === 'login'
-            ? 'bg-background-elevated text-primary-500 shadow-sm'
-            : 'text-text-secondary hover:text-text-primary'
+            ? 'bg-white text-orange-500 shadow-sm'
+            : 'text-gray-600 hover:text-gray-900'
         ]"
       >
         Entrar
@@ -28,8 +28,8 @@
         :class="[
           'flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all',
           activeTab === 'register'
-            ? 'bg-background-elevated text-primary-500 shadow-sm'
-            : 'text-text-secondary hover:text-text-primary'
+            ? 'bg-white text-orange-500 shadow-sm'
+            : 'text-gray-600 hover:text-gray-900'
         ]"
       >
         Criar Conta
@@ -37,8 +37,8 @@
     </div>
 
     <!-- Mensagem de erro -->
-    <div v-if="errorMessage" class="mb-4 p-3 bg-danger-50 border border-danger-200 rounded-lg">
-      <p class="text-sm text-danger-600">{{ errorMessage }}</p>
+    <div v-if="errorMessage" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+      <p class="text-sm text-red-600">{{ errorMessage }}</p>
     </div>
 
     <!-- Formulário de Login -->
@@ -65,13 +65,13 @@
           <input
             v-model="loginForm.rememberMe"
             type="checkbox"
-            class="w-4 h-4 text-primary-500 bg-background-primary border-border-primary rounded focus:ring-primary-500 focus:ring-2"
+            class="w-4 h-4 text-orange-500 bg-white border-gray-300 rounded focus:ring-orange-500 focus:ring-2"
             :disabled="isLoading"
           />
-          <span class="ml-2 text-sm text-text-secondary">Lembrar de mim</span>
+          <span class="ml-2 text-sm text-gray-600">Lembrar de mim</span>
         </label>
 
-        <a href="#" class="text-sm text-primary-500 hover:text-primary-600 transition-colors">
+        <a href="#" class="text-sm text-orange-500 hover:text-orange-600 transition-colors">
           Esqueceu a senha?
         </a>
       </div>
@@ -118,15 +118,15 @@
         <input
           v-model="registerForm.acceptTerms"
           type="checkbox"
-          class="w-4 h-4 text-primary-500 bg-background-primary border-border-primary rounded focus:ring-primary-500 focus:ring-2 mt-0.5"
+          class="w-4 h-4 text-orange-500 bg-white border-gray-300 rounded focus:ring-orange-500 focus:ring-2 mt-0.5"
           required
           :disabled="isLoading"
         />
-        <label class="ml-3 text-sm text-text-secondary">
+        <label class="ml-3 text-sm text-gray-600">
           Concordo com os 
-          <a href="#" class="text-primary-500 hover:text-primary-600 transition-colors">Termos de Uso</a>
+          <a href="#" class="text-orange-500 hover:text-orange-600 transition-colors">Termos de Uso</a>
           e 
-          <a href="#" class="text-primary-500 hover:text-primary-600 transition-colors">Política de Privacidade</a>
+          <a href="#" class="text-orange-500 hover:text-orange-600 transition-colors">Política de Privacidade</a>
         </label>
       </div>
 

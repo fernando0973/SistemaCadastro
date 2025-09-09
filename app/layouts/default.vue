@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-background-primary flex flex-col">
+  <div class="min-h-screen bg-gray-50 flex flex-col">
     <!-- Header -->
     <AppHeader />
     
