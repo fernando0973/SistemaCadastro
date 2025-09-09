@@ -1,6 +1,8 @@
 <template>
-  <div class="min-h-[70vh] flex items-center justify-center py-8 px-4">
-    <LoginForm />
+  <div class="min-h-[70vh] flex items-start justify-center py-8 px-4">
+    <div class="mt-16">
+      <LoginForm />
+    </div>
   </div>
 </template>
 
