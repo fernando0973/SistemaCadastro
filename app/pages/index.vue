@@ -1,14 +1,14 @@
 <template>
-  <div class="min-h-screen bg-background-secondary">
-    <div class="container-app py-8">
+  <div class="min-h-screen bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Cabeçalho -->
-      <div class="bg-background-elevated rounded-card shadow-card p-6 mb-6">
+      <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
         <div class="flex items-center justify-between">
           <div>
-            <h1 class="text-heading-2 text-text-primary font-bold">
+            <h1 class="text-2xl font-bold text-gray-900">
               Sistema de Cadastro
             </h1>
-            <p class="text-body-md text-text-secondary mt-1">
+            <p class="text-base text-gray-600 mt-1">
               Bem-vindo ao seu painel de controle
             </p>
           </div>

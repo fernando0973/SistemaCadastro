@@ -9,7 +9,8 @@
 <script setup lang="ts">
 // Meta da página
 definePageMeta({
-  layout: 'default'
+  layout: 'default',
+  auth: false // Indica que esta página não precisa de autenticação
 })
 
 // SEO

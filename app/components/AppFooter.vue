@@ -1,6 +1,10 @@
 <template>
-  <footer class="bg-background-secondary border-t border-border-primary mt-auto">
-    <!-- Footer será desenvolvido -->
+  <footer class="bg-gray-50 border-t border-gray-200 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <p class="text-center text-sm text-gray-600">
+        © 2025 Sistema Cadastro. Todos os direitos reservados.
+      </p>
+    </div>
   </footer>
 </template>
 

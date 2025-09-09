@@ -90,6 +90,15 @@
     <!-- Formulário de Cadastro -->
     <form v-else @submit.prevent="handleRegister" class="space-y-4">
       <BaseInput
+        v-model="registerForm.fullName"
+        type="text"
+        label="Nome Completo"
+        placeholder="Digite seu nome completo"
+        required
+        :disabled="isLoading"
+      />
+
+      <BaseInput
         v-model="registerForm.email"
         type="email"
         label="E-mail"
@@ -154,6 +163,7 @@ interface LoginForm {
 }
 
 interface RegisterForm {
+  fullName: string
   email: string
   password: string
   confirmPassword: string
@@ -173,6 +183,7 @@ const loginForm = reactive<LoginForm>({
 })
 
 const registerForm = reactive<RegisterForm>({
+  fullName: '',
   email: '',
   password: '',
   confirmPassword: '',
@@ -184,7 +195,7 @@ const isLoading = ref(false)
 const errorMessage = ref('')
 
 // Usar o composable de autenticação
-const { login, isAuthenticated } = useAuth()
+const { login, signUp, isAuthenticated } = useAuth()
 
 // Métodos
 const setActiveTab = (tab: TabType) => {
@@ -193,47 +204,170 @@ const setActiveTab = (tab: TabType) => {
 }
 
 const handleLogin = async () => {
-  if (!loginForm.email || !loginForm.password) {
-    errorMessage.value = 'Email e senha são obrigatórios'
+  // Limpar mensagem de erro anterior
+  errorMessage.value = ''
+
+  // Validações básicas
+  if (!loginForm.email.trim()) {
+    errorMessage.value = 'O email é obrigatório'
+    return
+  }
+
+  if (!loginForm.password.trim()) {
+    errorMessage.value = 'A senha é obrigatória'
+    return
+  }
+
+  // Validação de formato de email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(loginForm.email)) {
+    errorMessage.value = 'Por favor, insira um email válido'
+    return
+  }
+
+  // Validação de comprimento mínimo da senha
+  if (loginForm.password.length < 6) {
+    errorMessage.value = 'A senha deve ter pelo menos 6 caracteres'
     return
   }
 
   isLoading.value = true
-  errorMessage.value = ''
 
   try {
     const { error } = await login(loginForm.email, loginForm.password)
+    
     if (error) {
-      errorMessage.value = error.message
+      // Tratar diferentes tipos de erro de autenticação
+      if (error.message.includes('Invalid login credentials')) {
+        errorMessage.value = 'Email ou senha incorretos. Verifique suas credenciais e tente novamente.'
+      } else if (error.message.includes('Email not confirmed')) {
+        errorMessage.value = 'Por favor, confirme seu email antes de fazer login.'
+      } else if (error.message.includes('Too many requests')) {
+        errorMessage.value = 'Muitas tentativas de login. Tente novamente em alguns minutos.'
+      } else if (error.message.includes('User not found')) {
+        errorMessage.value = 'Usuário não encontrado. Verifique o email digitado.'
+      } else {
+        errorMessage.value = 'Erro ao fazer login. Tente novamente.'
+      }
     } else {
-      // Redirecionar para a página principal após login bem-sucedido
+      // Login bem-sucedido - limpar formulário e redirecionar
+      loginForm.email = ''
+      loginForm.password = ''
+      loginForm.rememberMe = false
       await navigateTo('/')
     }
   } catch (error: any) {
-    errorMessage.value = error.message || 'Ocorreu um erro inesperado'
+    console.error('Erro inesperado no login:', error)
+    errorMessage.value = 'Ocorreu um erro inesperado. Tente novamente em alguns instantes.'
   } finally {
     isLoading.value = false
   }
 }
 
-const handleRegister = () => {
-  if (!registerForm.email || !registerForm.password) {
-    errorMessage.value = 'Email e senha são obrigatórios'
+const handleRegister = async () => {
+  // Limpar mensagem de erro anterior
+  errorMessage.value = ''
+
+  // Validações básicas
+  if (!registerForm.fullName.trim()) {
+    errorMessage.value = 'O nome completo é obrigatório'
     return
   }
-  
+
+  if (!registerForm.email.trim()) {
+    errorMessage.value = 'O email é obrigatório'
+    return
+  }
+
+  if (!registerForm.password.trim()) {
+    errorMessage.value = 'A senha é obrigatória'
+    return
+  }
+
+  // Validação de formato de email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(registerForm.email)) {
+    errorMessage.value = 'Por favor, insira um email válido'
+    return
+  }
+
+  // Validação de comprimento mínimo da senha
+  if (registerForm.password.length < 6) {
+    errorMessage.value = 'A senha deve ter pelo menos 6 caracteres'
+    return
+  }
+
+  // Verificar se as senhas coincidem
   if (registerForm.password !== registerForm.confirmPassword) {
     errorMessage.value = 'As senhas não coincidem'
     return
   }
-  
+
+  // Verificar se aceitou os termos
   if (!registerForm.acceptTerms) {
     errorMessage.value = 'Você deve aceitar os termos de uso'
     return
   }
 
-  console.log('Register form submitted:', registerForm)
-  errorMessage.value = 'Funcionalidade de registro ainda não implementada'
-  // Aqui será implementada a lógica de cadastro
+  isLoading.value = true
+
+  try {
+    const { error, needsConfirmation, message } = await signUp(
+      registerForm.email,
+      registerForm.password,
+      registerForm.fullName
+    )
+    
+    if (error) {
+      // Tratar diferentes tipos de erro de registro
+      if (error.message.includes('User already registered')) {
+        errorMessage.value = 'Este email já está cadastrado. Tente fazer login ou use outro email.'
+      } else if (error.message.includes('Password should be at least')) {
+        errorMessage.value = 'A senha deve ter pelo menos 6 caracteres'
+      } else if (error.message.includes('Invalid email')) {
+        errorMessage.value = 'Por favor, insira um email válido'
+      } else if (error.message.includes('signup is disabled')) {
+        errorMessage.value = 'Cadastro temporariamente desabilitado. Tente novamente mais tarde.'
+      } else {
+        errorMessage.value = error.message || 'Erro ao criar conta. Tente novamente.'
+      }
+    } else {
+      // Registro bem-sucedido
+      if (needsConfirmation) {
+        // Mostrar mensagem de confirmação de email
+        errorMessage.value = ''
+        // Você pode criar uma mensagem de sucesso aqui
+        alert(message || 'Conta criada! Verifique seu email para confirmar.')
+        
+        // Limpar formulário
+        registerForm.fullName = ''
+        registerForm.email = ''
+        registerForm.password = ''
+        registerForm.confirmPassword = ''
+        registerForm.acceptTerms = false
+        
+        // Voltar para a aba de login
+        activeTab.value = 'login'
+      } else {
+        // Login automático após registro
+        alert(message || 'Conta criada e login realizado com sucesso!')
+        
+        // Limpar formulário
+        registerForm.fullName = ''
+        registerForm.email = ''
+        registerForm.password = ''
+        registerForm.confirmPassword = ''
+        registerForm.acceptTerms = false
+        
+        // Redirecionar para a página inicial
+        await navigateTo('/')
+      }
+    }
+  } catch (error: any) {
+    console.error('Erro inesperado no registro:', error)
+    errorMessage.value = 'Ocorreu um erro inesperado. Tente novamente em alguns instantes.'
+  } finally {
+    isLoading.value = false
+  }
 }
 </script>

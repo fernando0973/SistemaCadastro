@@ -1,18 +1,12 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col">
-    <!-- Header -->
-    <AppHeader />
-    
+  <div class="min-h-screen bg-gray-50">
     <!-- Main Content -->
-    <main class="flex-1">
+    <main>
       <slot />
     </main>
-    
-    <!-- Footer -->
-    <AppFooter />
   </div>
 </template>
 
 <script setup lang="ts">
-// Layout padrão do sistema
+// Layout padrão limpo sem header/footer
 </script>
