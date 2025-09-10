@@ -2,6 +2,8 @@
 
 Sistema de login com NuxtJS 4. TailwindCSS, HeadlessUI, HeroIcons e Supabase.
 
+[![Status](https://img.shields.io/badge/Status-Concluído-brightgreen)](https://github.com/fernando0973/SistemaCadastro)
+
 ## Tecnologias
 
 - **Nuxt 4** - Framework Vue.js com SSR
