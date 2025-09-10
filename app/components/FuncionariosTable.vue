@@ -112,18 +112,28 @@
 
             <!-- Ações -->
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <button 
-                class="text-orange-600 hover:text-orange-900 mr-3 transition-colors"
-                @click="editFuncionario(funcionario)"
-              >
-                Editar
-              </button>
-              <button 
-                class="text-red-600 hover:text-red-900 transition-colors"
-                @click="deleteFuncionario(funcionario)"
-              >
-                Excluir
-              </button>
+              <div class="flex justify-end space-x-2">
+                <button 
+                  class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors"
+                  @click="editFuncionario(funcionario)"
+                  title="Editar funcionário"
+                >
+                  <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  Editar
+                </button>
+                <button 
+                  class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+                  @click="confirmDelete(funcionario)"
+                  title="Excluir funcionário"
+                >
+                  <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  Excluir
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -136,14 +146,34 @@
         Total de <span class="font-medium">{{ funcionarios.length }}</span> funcionário{{ funcionarios.length !== 1 ? 's' : '' }} encontrado{{ funcionarios.length !== 1 ? 's' : '' }}
       </p>
     </div>
+    
+    <!-- Modal de confirmação de exclusão -->
+    <ConfirmModal
+      :show="showDeleteModal"
+      title="Confirmar Exclusão"
+      :message="funcionarioToDelete ? `Deseja realmente excluir ${funcionarioToDelete.nome}? Esta ação não pode ser desfeita.` : 'Deseja realmente excluir este funcionário? Esta ação não pode ser desfeita.'"
+      confirm-text="Excluir"
+      cancel-text="Cancelar"
+      type="danger"
+      @close="showDeleteModal = false"
+      @confirm="handleDelete"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import type { Funcionario } from '~/types/funcionario'
 
+// Imports
+import ConfirmModal from '~/components/ConfirmModal.vue'
+
 // Usar o composable de funcionários
-const { funcionarios, isLoading, error, fetchFuncionarios } = useFuncionarios()
+const { funcionarios, isLoading, error, fetchFuncionarios, deleteFuncionario } = useFuncionarios()
+const { success, error: errorToast } = useNotification()
+
+// Estado do modal de confirmação
+const showDeleteModal = ref(false)
+const funcionarioToDelete = ref<Funcionario | null>(null)
 
 // Buscar funcionários quando o componente for montado
 onMounted(async () => {
@@ -158,14 +188,40 @@ const formatCurrency = (value: number): string => {
   }).format(value)
 }
 
-// Funções para ações (placeholders por enquanto)
+// Router para navegação
+const router = useRouter()
+
+// Funções para ações
 const editFuncionario = (funcionario: Funcionario) => {
-  console.log('Editar funcionário:', funcionario)
-  // TODO: Implementar edição
+  // Navegar para a página de edição do funcionário usando o ID
+  router.push(`/funcionario/${funcionario.id}`)
 }
 
-const deleteFuncionario = (funcionario: Funcionario) => {
-  console.log('Excluir funcionário:', funcionario)
-  // TODO: Implementar exclusão
+// Função para mostrar o modal de confirmação de exclusão
+const confirmDelete = (funcionario: Funcionario) => {
+  funcionarioToDelete.value = funcionario
+  showDeleteModal.value = true
+}
+
+// Função para executar a exclusão após a confirmação
+const handleDelete = async () => {
+  if (!funcionarioToDelete.value) return
+  
+  try {
+    const result = await deleteFuncionario(funcionarioToDelete.value.id)
+    
+    if (result.success) {
+      success(`Funcionário ${funcionarioToDelete.value.nome} excluído com sucesso!`)
+    } else {
+      errorToast('Erro ao excluir funcionário. Tente novamente.')
+    }
+  } catch (err) {
+    console.error('Erro ao excluir funcionário:', err)
+    errorToast('Erro inesperado ao excluir funcionário.')
+  } finally {
+    // Fechar o modal
+    showDeleteModal.value = false
+    funcionarioToDelete.value = null
+  }
 }
 </script>

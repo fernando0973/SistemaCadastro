@@ -1,17 +1,16 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <!-- Cabeçalho -->
-      <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <h1 class="text-2xl font-bold text-gray-900">
-              Sistema de Cadastro
-            </h1>
-            <p class="text-base text-gray-600 mt-1">
-              Bem-vindo ao seu painel de controle
-            </p>
-          </div>
+  <div class="container-app py-8">
+    <!-- Cabeçalho -->
+    <div class="card-elevated card-body mb-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-heading-2 text-text-primary">
+            Sistema de Cadastro
+          </h1>
+          <p class="text-body-md text-text-secondary mt-1">
+            Bem-vindo ao seu painel de controle
+          </p>
+        </div>
           
           <div v-if="isAuthenticated" class="flex items-center space-x-4">
             <div class="text-right">
@@ -55,9 +54,20 @@
               <div class="ml-4">
                 <h3 class="text-heading-5 text-text-primary font-semibold">Funcionários</h3>
                 <p class="text-body-sm text-text-secondary">Gerencie sua equipe</p>
+                <div class="mt-3">
+                  <BaseButton
+                    variant="primary"
+                    size="sm"
+                    @click="$router.push('/novocadastro')"
+                  >
+                    Novo Funcionário
+                  </BaseButton>
+                </div>
               </div>
             </div>
           </div>
+
+
 
           <!-- Card de Configurações -->
           <div class="bg-background-elevated rounded-card shadow-card p-6">
@@ -120,7 +130,6 @@
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script setup lang="ts">
@@ -128,6 +137,7 @@ import { ref } from 'vue'
 import BaseButton from '~/components/BaseButton.vue'
 import FuncionariosTable from '~/components/FuncionariosTable.vue'
 import { useAuth } from '~/composables/useAuth'
+import { useNotification } from '~/composables/useNotification'
 
 // Página inicial
 definePageMeta({
@@ -139,6 +149,9 @@ const isLoggingOut = ref(false)
 
 // Usar o composable de autenticação
 const { isAuthenticated, user, logout } = useAuth()
+
+// Usar o composable de notificação
+const { error } = useNotification()
 
 // Função para fazer logout
 async function handleLogout() {

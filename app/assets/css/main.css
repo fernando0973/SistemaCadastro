@@ -183,3 +183,272 @@ select:focus {
     display: none !important;
   }
 }
+
+/* Toast customization para combinar com o design system */
+:root {
+  --toastify-color-light: theme('colors.background.primary');
+  --toastify-color-dark: theme('colors.secondary.900');
+  --toastify-color-info: theme('colors.accent.info');
+  --toastify-color-success: theme('colors.accent.success');
+  --toastify-color-warning: theme('colors.accent.warning');
+  --toastify-color-error: theme('colors.accent.error');
+  --toastify-color-transparent: rgba(255, 255, 255, 0.7);
+  --toastify-text-color-light: theme('colors.text.primary');
+  --toastify-text-color-dark: theme('colors.text.inverse');
+  --toastify-font-family: 'Inter', sans-serif;
+  --toastify-toast-width: 320px;
+  --toastify-toast-background: theme('colors.background.elevated');
+  --toastify-toast-min-height: 64px;
+  --toastify-toast-max-height: 800px;
+  --toastify-z-index: 9999;
+}
+
+/* Container dos toasts */
+.Vue-Toastification__container {
+  z-index: 9999;
+}
+
+/* Melhorias para acessibilidade e legibilidade */
+.Vue-Toastification__toast {
+  font-size: 0.95rem !important;
+  letter-spacing: 0.01em !important;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 8px !important;
+}
+
+/* Estilo customizado dos toasts */
+.custom-toast {
+  border-radius: 8px;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+  min-height: 68px;
+}
+
+.custom-toast-body {
+  font-size: 0.875rem;
+  font-family: 'Inter', sans-serif;
+  padding: 1rem 1.25rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* Toast de sucesso */
+.Vue-Toastification__toast--success {
+  background-color: #16a34a;
+  border-left: 4px solid rgba(255, 255, 255, 0.6);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+}
+
+.Vue-Toastification__toast--success .Vue-Toastification__icon,
+.Vue-Toastification__toast--success .Vue-Toastification__icon svg,
+.Vue-Toastification__toast--success .Vue-Toastification__icon svg path {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
+}
+
+.Vue-Toastification__toast--success .Vue-Toastification__toast-body {
+  color: #ffffff !important;
+  font-weight: 500;
+}
+
+/* Toast de erro */
+.Vue-Toastification__toast--error {
+  background-color: #dc2626;
+  border-left: 4px solid rgba(255, 255, 255, 0.6);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.Vue-Toastification__toast--error .Vue-Toastification__icon,
+.Vue-Toastification__toast--error .Vue-Toastification__icon svg,
+.Vue-Toastification__toast--error .Vue-Toastification__icon svg path {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
+}
+
+.Vue-Toastification__toast--error .Vue-Toastification__toast-body {
+  color: #ffffff !important;
+  font-weight: 500;
+}
+
+/* Toast de aviso */
+.Vue-Toastification__toast--warning {
+  background-color: #d97706;
+  border-left: 4px solid rgba(255, 255, 255, 0.6);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+}
+
+.Vue-Toastification__toast--warning .Vue-Toastification__icon,
+.Vue-Toastification__toast--warning .Vue-Toastification__icon svg,
+.Vue-Toastification__toast--warning .Vue-Toastification__icon svg path {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
+}
+
+.Vue-Toastification__toast--warning .Vue-Toastification__toast-body {
+  color: #ffffff !important;
+  font-weight: 500;
+}
+
+/* Toast de informação */
+.Vue-Toastification__toast--info {
+  background-color: #2563eb;
+  border-left: 4px solid rgba(255, 255, 255, 0.6);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.Vue-Toastification__toast--info .Vue-Toastification__icon,
+.Vue-Toastification__toast--info .Vue-Toastification__icon svg,
+.Vue-Toastification__toast--info .Vue-Toastification__icon svg path {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
+}
+
+.Vue-Toastification__toast--info .Vue-Toastification__toast-body {
+  color: #ffffff !important;
+  font-weight: 500;
+}
+
+/* Toast padrão */
+.Vue-Toastification__toast--default {
+  background-color: #475569;
+  border-left: 4px solid rgba(255, 255, 255, 0.6);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(71, 85, 105, 0.3);
+}
+
+.Vue-Toastification__toast--default .Vue-Toastification__icon,
+.Vue-Toastification__toast--default .Vue-Toastification__icon svg,
+.Vue-Toastification__toast--default .Vue-Toastification__icon svg path {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
+}
+
+.Vue-Toastification__toast--default .Vue-Toastification__toast-body {
+  color: #ffffff !important;
+  font-weight: 500;
+}
+
+/* Força os ícones a aparecerem corretamente */
+.Vue-Toastification__icon {
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  min-width: 1.5rem !important;
+  min-height: 1.5rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-right: 0.75rem !important;
+}
+
+.Vue-Toastification__icon * {
+  opacity: 1 !important;
+}
+
+/* Força cores brancas para todos os ícones */
+.Vue-Toastification__toast--success .Vue-Toastification__icon,
+.Vue-Toastification__toast--success .Vue-Toastification__icon *,
+.Vue-Toastification__toast--success .Vue-Toastification__icon > *,
+.Vue-Toastification__toast--success .Vue-Toastification__icon svg,
+.Vue-Toastification__toast--success .Vue-Toastification__icon svg * {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+.Vue-Toastification__toast--error .Vue-Toastification__icon,
+.Vue-Toastification__toast--error .Vue-Toastification__icon *,
+.Vue-Toastification__toast--error .Vue-Toastification__icon > *,
+.Vue-Toastification__toast--error .Vue-Toastification__icon svg,
+.Vue-Toastification__toast--error .Vue-Toastification__icon svg * {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+.Vue-Toastification__toast--warning .Vue-Toastification__icon,
+.Vue-Toastification__toast--warning .Vue-Toastification__icon *,
+.Vue-Toastification__toast--warning .Vue-Toastification__icon > *,
+.Vue-Toastification__toast--warning .Vue-Toastification__icon svg,
+.Vue-Toastification__toast--warning .Vue-Toastification__icon svg * {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+.Vue-Toastification__toast--info .Vue-Toastification__icon,
+.Vue-Toastification__toast--info .Vue-Toastification__icon *,
+.Vue-Toastification__toast--info .Vue-Toastification__icon > *,
+.Vue-Toastification__toast--info .Vue-Toastification__icon svg,
+.Vue-Toastification__toast--info .Vue-Toastification__icon svg * {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* Botão de fechar */
+.Vue-Toastification__close-button {
+  color: #ffffff !important;
+  opacity: 0.8;
+  transition: all 0.2s ease;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.Vue-Toastification__close-button:hover {
+  opacity: 1 !important;
+  color: #ffffff !important;
+  transform: scale(1.1);
+}
+
+/* Barra de progresso */
+.Vue-Toastification__progress-bar {
+  height: 4px;
+  border-radius: 2px;
+  background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.Vue-Toastification__toast--success .Vue-Toastification__progress-bar {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.Vue-Toastification__toast--error .Vue-Toastification__progress-bar {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.Vue-Toastification__toast--warning .Vue-Toastification__progress-bar {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.Vue-Toastification__toast--info .Vue-Toastification__progress-bar {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.Vue-Toastification__toast--default .Vue-Toastification__progress-bar {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+}

@@ -1,43 +1,45 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col">
-    <!-- Header -->
-    <AppHeader />
-    
-    <!-- Main Content -->
-    <main class="flex-1">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="text-center">
-          <h1 class="text-3xl font-bold text-gray-900 mb-4">Novo Cadastro</h1>
-          <p class="text-lg text-gray-600 mb-8">
-            Bem-vindo à página de novo cadastro do sistema.
-          </p>
-          
-          <!-- Aqui será implementado o conteúdo específico da página -->
-          <div class="bg-white rounded-lg shadow-lg p-8 max-w-2xl mx-auto">
-            <p class="text-gray-500">
-              Conteúdo da página de novo cadastro será implementado aqui.
-            </p>
-          </div>
-        </div>
+  <div class="container-app py-8">
+    <!-- Cabeçalho da página -->
+    <div class="mb-8">
+      <div class="flex items-center space-x-4 mb-4">
+        <BaseButton
+          variant="secondary"
+          size="sm"
+          @click="$router.back()"
+        >
+          ← Voltar
+        </BaseButton>
       </div>
-    </main>
-    
-    <!-- Footer -->
-    <AppFooter />
+      
+      <h1 class="text-heading-2 text-text-primary">Novo Funcionário</h1>
+      <p class="text-body-md text-text-secondary mt-2">
+        Cadastre um novo funcionário no sistema
+      </p>
+    </div>
+
+    <!-- Formulário de cadastro -->
+    <div class="max-w-2xl mx-auto">
+      <FuncionarioForm :is-novo="true" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import BaseButton from '~/components/BaseButton.vue'
+import FuncionarioForm from '~/components/FuncionarioForm.vue'
+import { useAuth } from '~/composables/useAuth'
+
 // Meta da página
 definePageMeta({
-  layout: false // Não usar layout padrão, pois já incluímos header/footer aqui
+  layout: 'default'
 })
 
 // SEO
 useHead({
-  title: 'Novo Cadastro - Sistema Cadastro',
+  title: 'Novo Funcionário - Sistema Cadastro',
   meta: [
-    { name: 'description', content: 'Página de novo cadastro do Sistema Cadastro' }
+    { name: 'description', content: 'Cadastrar novo funcionário no sistema' }
   ]
 })
 
