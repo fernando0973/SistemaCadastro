@@ -77,6 +77,46 @@ insert into funcionarios (nome, cargo, endereco, email, salario) values
 ('Gustavo Nunes', 'Gerente', 'Av. Brasil, 777 - Salvador/BA', 'gustavo.nunes@barbearialuxo.com', 4300.00);
 ```
 
+## Estrutura do Projeto
+
+```
+app/
+  ├─ assets/                # Arquivos estáticos (CSS, imagens)
+  │   └─ css/
+  │      └─ main.css       # Estilos globais e customizações
+  │
+  ├─ components/           # Componentes Vue reutilizáveis
+  │   ├─ AppFooter.vue     # Rodapé da aplicação
+  │   ├─ AppHeader.vue     # Cabeçalho da aplicação
+  │   ├─ BaseButton.vue    # Componente de botão reutilizável
+  │   ├─ BaseInput.vue     # Componente de input reutilizável
+  │   ├─ BasePasswordInput.vue # Input de senha com toggle de visibilidade
+  │   ├─ BaseDropdown.vue  # Componente de dropdown/select
+  │   ├─ ConfirmModal.vue  # Modal de confirmação para ações críticas
+  │   ├─ FuncionarioForm.vue # Formulário de cadastro/edição de funcionários
+  │   ├─ FuncionariosTable.vue # Tabela de listagem de funcionários
+  │   └─ LoginForm.vue     # Formulário de login
+  │
+  ├─ composables/          # Composables Vue (lógica reutilizável)
+  │   ├─ useAuth.ts        # Lógica de autenticação
+  │   ├─ useFuncionarios.ts # Operações CRUD para funcionários
+  │   └─ useNotification.ts # Gerenciamento de notificações toast
+  │
+  ├─ layouts/              # Layouts da aplicação
+  │   └─ default.vue       # Layout padrão
+  │
+  ├─ pages/                # Páginas da aplicação (roteamento automático)
+  │   ├─ index.vue         # Página inicial/dashboard
+  │   ├─ login.vue         # Página de login
+  │   ├─ novocadastro.vue  # Página de cadastro de funcionário
+  │   └─ funcionario/
+  │       └─ [id].vue      # Página de visualização/edição de funcionário
+  │
+  └─ plugins/              # Plugins Nuxt
+      └─ supabase.client.ts # Configuração do cliente Supabase
+      └─ toast.client.ts   # Configuração do sistema de notificações
+```
+
 ## Development Server
 
 Start the development server on `http://localhost:3000`:
